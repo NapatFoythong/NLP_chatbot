@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>เข้าใจแชท — Chatbot Demo</title>
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700&family=Kanit:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --green: #06C755; --green-d: #04a344; --green-l: #e8faf0;
+      --text: #1a1a2e; --muted: #6b7a8d; --border: #e4eaf0;
+    }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { font-family:'Sarabun',sans-serif; background:#f0f4f8; color:var(--text); min-height:100vh; overflow-x:hidden; }
+
+    .hero {
+      background: linear-gradient(135deg,#0d1117 0%,#1a2e1a 50%,#0a2818 100%);
+      position:relative; overflow:hidden; padding:64px 24px 90px; text-align:center;
+    }
+    .hero::before {
+      content:''; position:absolute; inset:0;
+      background: radial-gradient(ellipse 60% 50% at 20% 50%,rgba(6,199,85,.15) 0%,transparent 70%),
+                  radial-gradient(ellipse 40% 60% at 80% 30%,rgba(6,199,85,.08) 0%,transparent 70%);
+    }
+    .hero-badge {
+      display:inline-block; background:rgba(6,199,85,.15); border:1px solid rgba(6,199,85,.4);
+      color:var(--green); font-family:'Kanit',sans-serif; font-size:.75rem; font-weight:600;
+      letter-spacing:.15em; text-transform:uppercase; padding:6px 18px; border-radius:100px;
+      margin-bottom:24px; position:relative; animation:fadeDown .6s ease both;
+    }
+    .hero-title {
+      font-family:'Kanit',sans-serif; font-size:clamp(2.4rem,7vw,4.5rem); font-weight:800;
+      color:#fff; line-height:1.1; position:relative; animation:fadeDown .6s .1s ease both;
+    }
+    .hero-title span { color:var(--green); }
+    .hero-sub {
+      font-size:1.05rem; color:rgba(255,255,255,.6); margin-top:16px;
+      max-width:480px; margin-left:auto; margin-right:auto; line-height:1.7;
+      position:relative; animation:fadeDown .6s .2s ease both;
+    }
+
+    .container { max-width:860px; margin:-48px auto 60px; padding:0 20px; }
+    .card {
+      background:#fff; border-radius:24px;
+      box-shadow:0 20px 60px rgba(0,0,0,.12); overflow:hidden;
+      animation:fadeUp .7s .3s ease both;
+    }
+
+    .card-top {
+      background:linear-gradient(135deg,var(--green) 0%,var(--green-d) 100%);
+      padding:32px; display:flex; align-items:center; gap:20px;
+    }
+    .line-icon {
+      width:56px; height:56px; background:#fff; border-radius:16px;
+      display:flex; align-items:center; justify-content:center; flex-shrink:0;
+      box-shadow:0 4px 16px rgba(0,0,0,.15);
+    }
+    .card-top-text h2 { font-family:'Kanit',sans-serif; font-size:1.5rem; font-weight:700; color:#fff; }
+    .card-top-text p { color:rgba(255,255,255,.8); font-size:.9rem; margin-top:4px; }
+
+    .card-body { padding:40px 32px; display:flex; justify-content:center; align-items:center; }
+    .qr-section { text-align:center; }
+    .qr-frame {
+      background:#fff; border:3px solid var(--green); border-radius:20px; padding:16px;
+      box-shadow:0 8px 32px rgba(6,199,85,.2); display:inline-block;
+    }
+    .qr-frame img { width:200px; height:200px; display:block; border-radius:8px; }
+    .qr-label { margin-top:16px; font-size:.85rem; color:var(--muted); line-height:1.5; }
+    .qr-label strong { display:block; font-family:'Kanit',sans-serif; font-size:1rem; color:var(--text); margin-bottom:4px; }
+    .scan-btn {
+      display:inline-flex; align-items:center; gap:8px; background:var(--green); color:#fff;
+      font-family:'Kanit',sans-serif; font-size:.9rem; font-weight:600; padding:10px 22px;
+      border-radius:100px; margin-top:16px; text-decoration:none; transition:.2s;
+    }
+    .scan-btn:hover { background:var(--green-d); transform:translateY(-2px); }
+
+    .info-section { flex:1; min-width:0; }
+    .info-section h3 { font-family:'Kanit',sans-serif; font-size:1.3rem; font-weight:700; margin-bottom:6px; }
+    .desc { font-size:.95rem; color:var(--muted); line-height:1.7; margin-bottom:28px; padding-bottom:24px; border-bottom:1px solid var(--border); }
+
+    .feature-list { display:flex; flex-direction:column; gap:12px; }
+    .feature-item {
+      display:flex; align-items:flex-start; gap:14px; padding:14px 16px;
+      background:var(--green-l); border-radius:12px; border-left:3px solid var(--green);
+    }
+    .feature-icon { font-size:1.3rem; flex-shrink:0; margin-top:1px; }
+    .feature-text strong { font-family:'Kanit',sans-serif; font-size:.95rem; font-weight:600; display:block; }
+    .feature-text span { font-size:.85rem; color:var(--muted); line-height:1.5; }
+
+    .demo-notice {
+      margin:0 32px 32px; background:#fff8e6; border:1px solid #ffd666;
+      border-radius:14px; padding:16px 20px; display:flex; align-items:flex-start; gap:12px;
+    }
+    .demo-notice .icon { font-size:1.4rem; flex-shrink:0; }
+    .demo-notice p { font-size:.88rem; color:#8a6800; line-height:1.6; }
+    .demo-notice strong { font-family:'Kanit',sans-serif; font-size:.95rem; color:#6b5000; display:block; margin-bottom:4px; }
+
+    footer { text-align:center; padding:24px; font-size:.8rem; color:var(--muted); }
+
+    @keyframes fadeDown { from{opacity:0;transform:translateY(-20px)} to{opacity:1;transform:translateY(0)} }
+    @keyframes fadeUp   { from{opacity:0;transform:translateY(30px)}  to{opacity:1;transform:translateY(0)} }
+
+    @media(max-width:640px) {
+      .card-body { flex-direction:column; align-items:center; padding:28px 20px; }
+      .card-top { padding:24px 20px; }
+      .demo-notice { margin:0 20px 24px; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-badge">LINE Chatbot Demo</div>
+  <h1 class="hero-title">เข้าใจ<span>แชท</span></h1>
+  <p class="hero-sub">ระบบทำความเข้าใจข้อความลูกค้าภาษาไทย<br>รองรับคำพิมพ์ผิดและภาษาไทย–อังกฤษปนกัน</p>
+</div>
+
+<div class="container">
+  <div class="card">
+
+    <div class="card-top">
+      <div class="line-icon">
+        <svg width="38" height="38" viewBox="0 0 48 48" fill="none">
+          <rect width="48" height="48" rx="12" fill="#06C755"/>
+          <path d="M24 8C15.163 8 8 14.402 8 22.25c0 7.05 6.252 12.963 14.7 14.05.572.123 1.35.377 1.548.866.177.443.116 1.137.057 1.584l-.25 1.496c-.076.443-.352 1.733 1.52.944 1.872-.788 10.1-5.946 13.78-10.18C41.725 28.24 40 25.39 40 22.25 40 14.402 32.837 8 24 8z" fill="white"/>
+          <path d="M21.5 25.5h-3a.5.5 0 01-.5-.5v-6a.5.5 0 011 0v5.5h2.5a.5.5 0 010 1zM23.5 25a.5.5 0 01-1 0v-6a.5.5 0 011 0v6zM30 19.5a.5.5 0 00-1 0v4.085l-3.195-4.363A.5.5 0 0025 19.5v6a.5.5 0 001 0v-4.085l3.195 4.363A.5.5 0 0030 25.5v-6zM35.5 20.5h-2.5V19a.5.5 0 00-1 0v6a.5.5 0 001 0v-3h2.5v3a.5.5 0 001 0v-6a.5.5 0 00-1 0v1.5z" fill="#06C755"/>
+        </svg>
+      </div>
+      <div class="card-top-text">
+        <h2>เข้าใจแชท Chatbot</h2>
+        <p>สแกน QR Code เพื่อเริ่มทดสอบได้เลย</p>
+      </div>
+    </div>
+
+    <div class="card-body">
+      <div class="qr-section">
+        <div class="qr-frame">
+          <img id="qrimg" alt="QR Code เข้าใจแชท" />
+        </div>
+        <div class="qr-label">
+          <strong>เข้าใจแชท</strong>
+          สแกนเพื่อเพิ่มเพื่อนใน LINE
+        </div>
+      </div>
+    </div>
+
+    <div class="demo-notice">
+      
+      <p>
+        <strong>หมายเหตุ: นี่คือ Demo เวอร์ชันเริ่มต้น</strong>
+        แชทบอทนี้เป็นระบบต้นแบบสำหรับการทดสอบเบื้องต้น ยังอยู่ในระหว่างการพัฒนาและปรับปรุงให้มีประสิทธิภาพสูงขึ้น การตอบกลับอาจยังไม่ครอบคลุมทุกกรณีการใช้งาน
+      </p>
+    </div>
+
+  </div>
+</div>
+
+<footer>
+  <p>© 2026 เข้าใจแชท — Chatbot Demo</p>
+</footer>
+
+<script>
+  // Embed QR from base64
+  document.getElementById('qrimg').src = 'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADb/2wBDAAUDBAQEAwUEBAQFBQUGBwwIBwcHBw8LCwkMEQ8SEhEPERETFhwXExQaFRERGCEYGh0dHx8fExciJCIeJBweHx7/2wBDAQUFBQcGBw4ICA4eFBEUHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh7/wAARCAFoAWgDASIAAhEBAxEB/8QAFgABAQEAAAAAAAAAAAAAAAAAAAkI/8QAFBABAAAAAAAAAAAAAAAAAAAAAP/EABQBAQAAAAAAAAAAAAAAAAAAAAD/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwDZYAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIzgswCM4swAjOLMAIzrMIzrMAAAAAjOswAAjOswAIzgLMIzrMIzgCzAAjOAALMAjOswjOswCM6zCM6zAIzgswCM4swAjOLMAIzrMIzrMAAAAAAAAAjOswjOswCM4ACzCM6zAIzrMIzrMAjOswjOswCM6zAAjOACzCM6zAAjOswAjOAAswjOswAIzrMAIzrMAIzgswAIzrMAjOswjOswCM4ACzCM6zAIzrMIzrMAAAAAAAAAjOswjOswCM4swAjOswAIzrMIzrMAIzrMIzgswjOswjOCzAIzgswIzgAswACM6zACM6zACM6zCM6zACM4ALMIzgLMAAjOswjOswCM4swAjOswAIzrMIzrMAAAAAAAAAjOLMAIzizACM4swAjOswAIzrMCM4CzCM4AswAIzrMACM6zCM6zAIzrMIzrMAjOswjOswCM6zAAjOswjOswCM6zCM4AswAIzizACM4swAjOLMAIzrMAAAAAAAAAACM4LMIzrMAIzrMIzgAswACM6zACM6zAACM4LMCM6zACM6zACM4swjOCzAjOAAAAswCM4LMACM6zAAjOAswjOswjOAswjOAswAAAAAAAAACM6zCM4ALMIzgCzACM6zAjOAswjOACzCM4CzCM6zACM6zCM4ALMAIzizAAjOAswjOLMAIzrMIzgCzACM6zCM6zAIzrMCM4LMIzgAswIzgswAAAAAAAAACM4swAjOswAIzgswCM4swjOCzCM4AswjOALMCM6zACM4swAAAjOAAswAAjOCzAjOAswjOswAjOswAIzrMIzrMAjOswjOswCM4swjOAswjOswAAAAAAAACM4AAswjOCzAAIzizCM4LMAAjOswjOswAjOLMAjOCzAIzgAswjOALMAAjOswIzgswIzgLMCM4CzCM4swCM4swAjOCzAAjOswAAAAAAAAAACM6zCM4AswAIzrMCM4AswAjOLMIzgswjOAALMACM4AACzCM4swCM4ALMAjOCzCM6zAAjOACzAACM4CzCM4ALMIzgCzCM6zAAAAAAAAACM4ALMIzrMAIzrMAIzrMCM4LMCM4ACzAAAAAIzizAAACM6zCM6zAAAIzrMCM4CzAjOALMIzgCzCM4LMIzgCzAjOALMIzrMAAAAAAAAAAAjOLMIzgAswCM4swjOCzCM6zCM4CzCM6zAIzrMIzgLMIzgCzCM6zAACM4CzCM4AswIzgAswAjOALMIzizAIzgAswjOALMCM6zAIzrMIzrMAAAAAAAAAjOswjOAswAAjOLMAjOLMACM4swCM4swAIzrMACM4AAswACM4CzAjOAswAAAIzgACzACM4ALMAAjOswjOswCM6zAAAAAAAAAAjOswjOswACM4LMAAjOLMIzgswCM4ALMAjOswIzgAAswAAjOswAjOswAIzgswAjOAAswAjOAAAAAAswIzgLMIzrMAAAAAAAAAjOCzAAjOswAjOswjOALMAAAAAIzgswAjOswjOALMAIzgswCM4ALMAACM4CzAjOACzCM4AswAIzizAAjOswAAAAAAAAAACM6zAAAAAAjOLMAIzrMIzgLMIzizAAjOswCM6zAAIzrMIzgCzACM6zCM6zACM4swAjOswACM6zAIzgswCM4swAjOswjOALMIzgCzCM6zAAAAAAAAAIzgswCM4swAjOLMAIzrMIzrMAjOswIzgswCM4ALMAIzgCzAIzgLMIzrMAjOLMAIzizCM4CzAjOCzCM6zACM6zCM6zAIzrMACM4LMACM6zAAAAAAAAAAAIzrMIzrMAjOAAswjOswCM6zCM6zAIzgALMACM4AAswjOCzAjOswACM4LMIzrMIzgLMACM4swAjOAALMAIzgACzCM4ALMAjOswjOswAAAAAAAACM6zCM6zAIzizACM6zAAjOswjOswAjOswAIzgALMIzgAswAjOswAIzrMIzgLMACM6zCM6zAIzizCM4LMIzrMIzgswjOLMAjOCzACM4AAswCM6zAAAAAAAAAAjOLMAIzizACM4swAjOswAAAIzizAAjOswAjOLMAIzizACM6zAAjOswAIzrMACM4swAjOswAIzizAAjOswAjOswAIzrMACM6zAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA//Z';
+</script>
+</body>
+</html>
